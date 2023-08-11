@@ -7,78 +7,247 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Manrope";
+  src: url("./taskpane/fonts/Manrope-VariableFont_wght.ttf") format("truetype");
+}
+
+input[type="file"] {
+  display: none;
+}
+
+input[type="checkbox"] {
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(1.5); /* IE */ /* FF */
+  -webkit-transform: scale(1.5); /* Safari and Chrome */ /* Opera */
+  transform: scale(1.5);
+  padding: 10px;
+}
+
+.small-checkbox {
+  -ms-transform: scale(1) !important; /* IE */ /* FF */
+  -webkit-transform: scale(1) !important; /* Safari and Chrome */ /* Opera */
+  transform: scale(1) !important;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
 body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;
+  font-family: "Manrope", sans-serif;
+}
+
+@layer base {
+  a {
+    @apply font-bold text-blue-600;
+  }
+}
+
+::-moz-selection {
+  background-color: #333;
+  color: white;
+}
+
+::selection {
+  background-color: #333;
+  color: white;
+}
+
+.marker-red {
+  @apply bg-marker-red;
+}
+
+.marker-orange {
+  @apply bg-marker-orange;
+}
+
+.marker-yellow {
+  @apply bg-marker-yellow;
+}
+
+.marker-green {
+  @apply bg-marker-green;
+}
+
+.marker-blue {
+  @apply bg-marker-blue;
+}
+
+.marker-purple {
+  @apply bg-marker-purple;
+}
+
+.marker-icon-opacity {
+  @apply bg-opacity-20;
+}
+
+.marker-icon-opacity:hover,
+.marker-button-opacity {
+  @apply bg-opacity-40;
+}
+
+/* Scrollbar for Mozilla */
+:root * {
+  scrollbar-color: rgba(58, 67, 66, 0.15) transparent;
+  scrollbar-width: thin;
+}
+
+/* width */
+::-webkit-scrollbar {
+  @apply w-[6px] h-[6px];
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  @apply rounded-full w-3 h-3;
+  background-color: rgba(58, 67, 66, 0.15);
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(58, 67, 66, 0.4);
+}
+
+/* This fix is required for react-beautiful-dnd to work together with radix */
+
+@layer components {
+  .sm {
+    @apply px-3 py-2 text-sm rounded;
+  }
+
+  .md {
+    @apply px-4 py-3 text-base rounded-md;
+  }
+
+  .lg {
+    @apply px-8 py-4 text-lg rounded-lg;
+  }
+
+  .disabled {
+    @apply opacity-50 cursor-not-allowed;
+  }
+  .disabled:hover {
+    @apply opacity-50 cursor-not-allowed;
+  }
+}
+
+/* React DraftJS WYSIWYG Editor Customizations */
+.rdw-option-wrapper {
+  @apply w-7 h-7 rounded bg-offWhite hover:shadow-none hover:border-lightGrey;
+}
+
+.rdw-option-active {
+  @apply shadow-none border-mediumGrey box-border hover:border-mediumGrey;
+}
+
+.public-DraftStyleDefault-block {
+  @apply my-0;
+}
+
+.rdw-block-wrapper {
+  @apply my-0;
+}
+
+.rdw-dropdown-selectedtext {
+  @apply text-black font-normal;
+}
+
+.RichEditor-hidePlaceholder .public-DraftEditorPlaceholder-root {
+  @apply hidden;
+}
+
+.rdw-suggestion-dropdown,
+.rdw-dropdown-optionwrapper,
+.rdw-dropdown-optionwrapper:hover {
+  @apply shadow-lg rounded-lg !p-1;
+}
+
+.rdw-suggestion-option,
+.rdw-dropdownoption-default {
+  @apply p-2 rounded border-none hover:bg-offWhite w-full;
+}
+
+.rdw-left-aligned-block > div {
+  @apply text-left;
+}
+
+.rdw-center-aligned-block > div {
+  @apply text-center;
+}
+
+.rdw-right-aligned-block > div {
+  @apply text-right;
+}
+
+.rdw-justify-aligned-block > div {
+  @apply text-justify;
+}
+
+h3 {
+  @apply text-xl font-bold mb-5 leading-5 hyphens-auto break-words;
+}
+
+/* SwiperJS Pagination Dots */
+.swiper-pagination-bullet {
+  @apply bg-mediumGrey;
+}
+
+.swiper-pagination-bullet.swiper-pagination-bullet-active {
+  @apply bg-mediumGrey;
+}
+
+/* Bulletpoints */
+ul,
+ol {
+  @apply space-y-2 my-6 ml-8 hyphens-auto break-words;
+}
+
+:is(ul, ol) > :is(ul, ol) {
+  @apply ml-4;
 }
 
 ul {
-  margin: 0;
-  padding: 0;
+  @apply list-disc;
 }
 
-.ms-welcome__header {
-  padding: 20px;
-  padding-bottom: 30px;
-  padding-top: 100px;
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  align-items: center;
+ol {
+  @apply list-decimal;
 }
 
-.ms-welcome__main {
-  display: -webkit-flex;
-  display: flex;
-  -webkit-flex-direction: column;
-  flex-direction: column;
-  -webkit-flex-wrap: nowrap;
-  flex-wrap: nowrap;
-  -webkit-align-items: center;
-  align-items: center;
-  -webkit-flex: 1 0 0;
-  flex: 1 0 0;
-  padding: 10px 20px;
+ul > ul {
+  list-style-type: circle;
 }
 
-.ms-welcome__main > h2 {
-  width: 100%;
-  text-align: center;
+ul > ul > ul {
+  list-style-type: square;
 }
 
-.ms-welcome__features {
-  list-style-type: none;
-  margin-top: 20px;
+p {
+  @apply hyphens-auto break-words;
+  min-height: 20px;
 }
 
-.ms-welcome__features.ms-List .ms-ListItem {
-  padding-bottom: 20px;
-  display: -webkit-flex;
-  display: flex;
+p:not(:last-child) {
+  @apply mb-2;
 }
 
-.ms-welcome__features.ms-List .ms-ListItem > .ms-Icon {
-  margin-right: 10px;
-}
-
-.ms-welcome__action.ms-Button--hero {
-  margin-top: 30px;
-}
-
-.ms-Button.ms-Button--hero .ms-Button-label {
-  color: #0078d7;
-}
-
-.ms-Button.ms-Button--hero:hover .ms-Button-label,
-.ms-Button.ms-Button--hero:focus .ms-Button-label {
-  color: #005a9e;
-  cursor: pointer;
-}
-
-b {
-  font-weight: bold;
+/* Break words for headlines */
+h2 {
+  @apply hyphens-auto break-words;
 }

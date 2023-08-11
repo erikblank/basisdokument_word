@@ -1,7 +1,14 @@
 import React from "react";
+import { useCase, useUser } from "../contexts";
 import TreeView from "./treeView/Treeview";
 
+/* global console */
+
 export const SidebarSorting = () => {
+  const { user } = useUser();
+  const { entries } = useCase();
+  console.log(user);
+  console.log(entries);
   return (
     //h-[calc(100vh-56px)] -> overflow scroll needs a fixed height of parent: 56px (height of sidebar header)
     <div className="flex flex-col gap-3 h-[calc(100vh-56px)]">

@@ -11,8 +11,7 @@ const TreeView123 = () => {
       defaultExpandIcon={<ChevronRightIcon />}
       sx={{ flexGrow: 1, overflowY: "auto" }}
     >
-      asdf
-      <TreeItem nodeId="1" label="abc">
+      <TreeItem nodeId="1" label="a">
         <TreeItem nodeId="2" label="asdf" />
         <TreeItem nodeId="2" label="asd" />
       </TreeItem>
