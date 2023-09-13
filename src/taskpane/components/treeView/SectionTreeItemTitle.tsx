@@ -3,7 +3,7 @@ import { ISection, UserRole } from "../../types";
 
 interface SectionTreeItemTitleProps {
   section: ISection;
-  position: string;
+  position: number;
 }
 
 const titleVisible = (title: string) => {

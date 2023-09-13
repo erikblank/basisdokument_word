@@ -9,14 +9,15 @@ import * as React from "react";
 import { ISection } from "../../types";
 import SectionTreeItemTitle from "./SectionTreeItemTitle";
 
-/* global console, Word, Office */
+/* global Word, Office */
 
 type SectionTreeItemProps = TreeItemProps & {
   section: ISection;
+  position: number;
 };
 
 export default function SectionTreeItem(props: SectionTreeItemProps) {
-  const { section, nodeId, ...other } = props;
+  const { section, nodeId, position, ...other } = props;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 
   const open = Boolean(anchorEl);
@@ -48,7 +49,6 @@ export default function SectionTreeItem(props: SectionTreeItemProps) {
     Office.context.ui.displayDialogAsync("https://localhost:3000/taskpane.html");
   };
 
-  console.log(section);
   return (
     <TreeItem
       nodeId={nodeId}
@@ -63,7 +63,7 @@ export default function SectionTreeItem(props: SectionTreeItemProps) {
             pr: 0,
           }}
         >
-          <SectionTreeItemTitle position={nodeId} section={section} />
+          <SectionTreeItemTitle position={position} section={section} />
           <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
             <IconButton onClick={handleClick}>
               <MoreHorizIcon color="inherit" />

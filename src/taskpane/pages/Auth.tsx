@@ -13,12 +13,13 @@ import {
   openEditFile,
   updateSortingsIfVersionIsDifferent,
 } from "../data-management/opening-handler";
-import { IStateUserInput, IUser, SidebarState, UsageMode, UserRole } from "../types";
+import { IEntry, IMetaData, ISection, IStateUserInput, IUser, SidebarState, UsageMode, UserRole } from "../types";
 import "react-toastify/dist/ReactToastify.css";
 import Cookies from "js-cookie";
 import { useOnboarding } from "../contexts/OnboardingContext";
 import { VersionPopup } from "../components/VersionPopup";
 import { useSidebar } from "../contexts/SidebarContext";
+import { clearBody, createTitle, createSections, createMetaData } from "../word-utils/wordUtils";
 
 /* global console, window */
 
@@ -28,11 +29,11 @@ interface AuthProps {
 
 const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
   // States for the form
-  const [usage, setUsage] = useState<IStateUserInput["usage"]>();
+  const [usage, setUsage] = useState<IStateUserInput["usage"]>(UsageMode.Open);
   const [caseId, setCaseId] = useState<IStateUserInput["caseId"]>("");
-  const [role, setRole] = useState<IStateUserInput["role"]>();
-  const [prename, setPrename] = useState<IStateUserInput["prename"]>("");
-  const [surname, setSurname] = useState<IStateUserInput["surname"]>("");
+  const [role, setRole] = useState<IStateUserInput["role"]>(UserRole.Plaintiff);
+  const [prename, setPrename] = useState<IStateUserInput["prename"]>("a");
+  const [surname, setSurname] = useState<IStateUserInput["surname"]>("a");
   const [basisdokumentFile, setBasisdokumentFile] = useState<IStateUserInput["basisdokumentFile"]>();
   const [editFile, setEditFile] = useState<IStateUserInput["editFile"]>();
   const [basisdokumentFilename, setBasisdokumentFilename] = useState<IStateUserInput["basisdokumentFile"]>("");
@@ -149,7 +150,7 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
     return true;
   };
 
-  const isValidFiles = () => {
+  const isValidFiles = async () => {
     // check if basisdokument file exists and has valid file format
     if (usage === UsageMode.Open || usage === UsageMode.Readonly) {
       if (!basisdokumentFilename.endsWith(".txt") || typeof basisdokumentFile !== "string" || !basisdokumentFile) {
@@ -189,7 +190,7 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
     return true;
   };
 
-  const validateUserInputAndOpen = () => {
+  const validateUserInputAndOpen = async () => {
     if (!isValidUsageMode()) return;
     if (!isValidRole()) return;
     if (!isValidNames()) return;
@@ -230,9 +231,23 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
 
     setUser(user);
     setContextFromBasisdokument(basisdokumentObject);
+    await initWordData(basisdokumentObject, role);
     setContextFromEditFile(editFileObject);
     checkOnboardingShownBefore();
     setIsAuthenticated(true);
+  };
+
+  // init data to word document
+  const initWordData = async (basisdokument: any, userRole: UserRole) => {
+    console.log(basisdokument);
+    const entries: IEntry[] = basisdokument.entries;
+    const sections: ISection[] = basisdokument.sections;
+    const metaData: IMetaData = basisdokument.metaData;
+    const currVersion: number = basisdokument.currentVersion;
+    await clearBody();
+    await createTitle();
+    await createMetaData(metaData);
+    await createSections(sections, entries, userRole, currVersion);
   };
 
   // The imported data from the files is then merged into a React state (context provider).

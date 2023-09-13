@@ -1,47 +1,19 @@
-import { List } from "phosphor-react";
 import cx from "classnames";
-import { Button } from "./Button";
-import { useSidebar } from "../contexts/SidebarContext";
-import { useUser } from "../contexts";
-import { UserRole } from "../types";
 import React from "react";
+import { useUser } from "../contexts";
+import { useSidebar } from "../contexts/SidebarContext";
+import { UserRole } from "../types";
+import { Button } from "./Button";
 
 export const SidebarHeader = () => {
-  const { sidebars, isSidebarOpen, setIsSidebarOpen, activeSidebar, setActiveSidebar } = useSidebar();
+  const { sidebars, activeSidebar, setActiveSidebar } = useSidebar();
 
   const { user } = useUser();
 
   return (
-    <div
-      className={cx("flex flex-row items-center h-14 border-b-[0.5px] border-lightGrey px-4 ", {
-        "justify-between": isSidebarOpen,
-      })}
-    >
-      <div
-        className={cx("transition duration-300", {
-          "rotate-90": isSidebarOpen,
-          "rotate-0": !isSidebarOpen,
-        })}
-      >
-        <Button
-          key={"sidebarActive"}
-          bgColor="transparent hover:bg-lightGrey"
-          size="sm"
-          textColor="font-bold text-darkGrey"
-          hasText={false}
-          alternativePadding="py-1.5 px-1.5"
-          icon={<List size={20} />}
-          onClick={() => {
-            setIsSidebarOpen(!isSidebarOpen);
-          }}
-        />
-      </div>
+    <div className={cx("flex flex-row items-center h-14 border-b-[0.5px] border-lightGrey px-4 ")}>
       {user?.role !== UserRole.Client && (
-        <div
-          className={cx("flex flex-row gap-3", {
-            hidden: !isSidebarOpen,
-          })}
-        >
+        <div className={cx("flex flex-row gap-3")}>
           {sidebars.map((sidebar) => (
             <Button
               key={sidebar.name}

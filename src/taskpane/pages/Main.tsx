@@ -1,14 +1,5 @@
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { TreeView } from "@mui/lab";
-import { ThemeProvider } from "@mui/material";
 import React from "react";
-import EntryTreeItem from "../components/treeView/EntryTreeItem";
-import SectionTreeItem from "../components/treeView/SectionTreeItem";
-import { useCase, useSection } from "../contexts";
-import { theme } from "../theme/muiTheme";
-
-/* global console */
+import { Sidebar } from "../components/Sidebar";
 
 /* const section: ISection = {
   id: "80456c3c-ab0d-453a-b92f-57020acd6d5b",
@@ -54,25 +45,22 @@ import { theme } from "../theme/muiTheme";
 ]; */
 
 const Main = () => {
-  const { entries } = useCase();
-  const { sectionList } = useSection();
-
-  console.log(entries);
-  console.log(sectionList);
+  /* const { entries } = useCase();
+  const { sectionList } = useSection(); */
 
   return (
     <>
-      {/* <Sidebar /> */}
-      <ThemeProvider theme={theme}>
+      <Sidebar />
+      {/* <ThemeProvider theme={theme}>
         <TreeView
           defaultCollapseIcon={<ExpandMoreIcon />}
           defaultExpandIcon={<ChevronRightIcon />}
           sx={{ flexGrow: 1, overflowY: "auto" }}
         >
-          {sectionList.map((section) => {
+          {sectionList.map((section, index) => {
             const filteredEntries = entries.filter((entry) => entry.sectionId === section.id);
             return (
-              <SectionTreeItem key={section.id} nodeId={section.id} section={section}>
+              <SectionTreeItem key={section.id} nodeId={section.id} section={section} position={index + 1}>
                 {filteredEntries.map((entry) => (
                   <EntryTreeItem key={entry.id} nodeId={entry.id} entry={entry} />
                 ))}
@@ -80,7 +68,7 @@ const Main = () => {
             );
           })}
         </TreeView>
-      </ThemeProvider>
+      </ThemeProvider> */}
     </>
   );
 };
