@@ -243,10 +243,6 @@ p {
   min-height: 20px;
 }
 
-p:not(:last-child) {
-  @apply mb-2;
-}
-
 /* Break words for headlines */
 h2 {
   @apply hyphens-auto break-words;

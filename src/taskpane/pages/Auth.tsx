@@ -19,7 +19,9 @@ import Cookies from "js-cookie";
 import { useOnboarding } from "../contexts/OnboardingContext";
 import { VersionPopup } from "../components/VersionPopup";
 import { useSidebar } from "../contexts/SidebarContext";
-import { clearBody, createTitle, createSections, createMetaData } from "../word-utils/wordUtils";
+import { clearBody, createTitle } from "../word-utils/wordUtils";
+import { createSections } from "../word-utils/WordSectionService";
+import { createMetaData } from "../word-utils/WordMetaDataService";
 
 /* global console, window */
 
@@ -32,8 +34,8 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
   const [usage, setUsage] = useState<IStateUserInput["usage"]>(UsageMode.Open);
   const [caseId, setCaseId] = useState<IStateUserInput["caseId"]>("");
   const [role, setRole] = useState<IStateUserInput["role"]>(UserRole.Plaintiff);
-  const [prename, setPrename] = useState<IStateUserInput["prename"]>("a");
-  const [surname, setSurname] = useState<IStateUserInput["surname"]>("a");
+  const [prename, setPrename] = useState<IStateUserInput["prename"]>("Erik");
+  const [surname, setSurname] = useState<IStateUserInput["surname"]>("Blanko");
   const [basisdokumentFile, setBasisdokumentFile] = useState<IStateUserInput["basisdokumentFile"]>();
   const [editFile, setEditFile] = useState<IStateUserInput["editFile"]>();
   const [basisdokumentFilename, setBasisdokumentFilename] = useState<IStateUserInput["basisdokumentFile"]>("");
@@ -246,7 +248,7 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
     const currVersion: number = basisdokument.currentVersion;
     await clearBody();
     await createTitle();
-    await createMetaData(metaData);
+    await createMetaData(metaData, userRole);
     await createSections(sections, entries, userRole, currVersion);
   };
 

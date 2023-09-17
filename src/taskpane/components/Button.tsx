@@ -37,7 +37,7 @@ export const Button: FC<ButtonProps> = ({
         {
           disabled: disabled,
           "flex-row-reverse": position === "end",
-          "gap-3": !!icon,
+          "gap-2": !!icon,
         }
       )}
     >

@@ -1,4 +1,4 @@
-import { Bookmarks, ListNumbers, Notepad, Paperclip, Scales } from "phosphor-react";
+import { Bookmarks, File, Notepad, Paperclip, Scales } from "phosphor-react";
 import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from "react";
 import { SidebarSorting } from "../components/SidebarSorting";
 import { ISidebar, SidebarState } from "../types";
@@ -7,7 +7,7 @@ const sidebars: ISidebar[] = [
   {
     name: SidebarState.Sorting,
     jsxElem: <SidebarSorting key={SidebarState.Sorting.toString()}></SidebarSorting>,
-    icon: <ListNumbers size={20} />,
+    icon: <File size={20} />,
   },
   {
     name: SidebarState.Notes,
@@ -33,8 +33,6 @@ const sidebars: ISidebar[] = [
 
 interface ISidebarContext {
   sidebars: ISidebar[];
-  isSidebarOpen: boolean;
-  setIsSidebarOpen: Dispatch<SetStateAction<boolean>>;
   activeSidebar: SidebarState;
   setActiveSidebar: Dispatch<SetStateAction<SidebarState>>;
 }
@@ -46,14 +44,11 @@ interface SidebarProviderProps {
 }
 
 export const SidebarProvider: FC<SidebarProviderProps> = ({ children }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(true);
   const [activeSidebar, setActiveSidebar] = useState<SidebarState>(sidebars[0].name);
   return (
     <SidebarContext.Provider
       value={{
         sidebars,
-        isSidebarOpen,
-        setIsSidebarOpen,
         activeSidebar,
         setActiveSidebar,
       }}

@@ -11,7 +11,7 @@ export const SidebarHeader = () => {
   const { user } = useUser();
 
   return (
-    <div className={cx("flex flex-row items-center h-14 border-b-[0.5px] border-lightGrey px-4 ")}>
+    <div className={cx("flex flex-row items-center h-14 border-y-[0.5px] border-lightGrey px-4 ")}>
       {user?.role !== UserRole.Client && (
         <div className={cx("flex flex-row gap-3")}>
           {sidebars.map((sidebar) => (
