@@ -70,7 +70,7 @@ export enum UsageMode {
 }
 
 export enum SidebarState {
-  Sorting,
+  WordFunctions,
   Notes,
   Hints,
   Bookmarks,

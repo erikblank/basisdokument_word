@@ -2,7 +2,7 @@ import cx from "classnames";
 import React from "react";
 import { FC, ReactNode } from "react";
 
-interface ButtonProps {
+export interface ButtonProps {
   icon?: any;
   bgColor?: string;
   textColor?: string;

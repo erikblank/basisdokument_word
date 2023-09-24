@@ -9,9 +9,9 @@ export const createMetaData = async (metaData: IMetaData, userRole: UserRole) =>
     const title = createMetaDataTitle(selection);
 
     const plainTiffTitle = createMetaDataSubTitle(title, UserRole.Plaintiff);
-    const platinTiffText = createMetaDataText(plainTiffTitle, metaData, UserRole.Plaintiff, userRole);
+    const plainTiffText = createMetaDataText(plainTiffTitle, metaData, UserRole.Plaintiff, userRole);
 
-    const defendantTitle = createMetaDataSubTitle(platinTiffText, UserRole.Defendant);
+    const defendantTitle = createMetaDataSubTitle(plainTiffText, UserRole.Defendant);
     createMetaDataText(defendantTitle, metaData, UserRole.Defendant, userRole);
 
     return context.sync();
@@ -68,4 +68,28 @@ const createMetaDataText = (
   metaDataCC.cannotDelete = true;
 
   return metaDataCC;
+};
+
+export const getLastCCOfMetaData = async (context: Word.RequestContext) => {
+  /* const metaDataCC = context.document.contentControls.getByTitle("TITLE_META_DATA_DEFENDANT");
+  // eslint-disable-next-line office-addins/no-navigational-load
+  metaDataCC.load(["items/length"]);
+  await context.sync();
+  const length = metaDataCC.items.length;
+  if (length > 0) {
+    const lastItem = metaDataCC.items[length - 1];
+    lastItem.load();
+    await context.sync();
+    return lastItem;
+  }
+  return null; */
+  const contentControls = context.document.contentControls;
+  contentControls.load(["title"]);
+  await context.sync();
+
+  if (contentControls.items.length > 0) {
+    return contentControls.items.find((cc) => cc.title === TITLE_META_DATA_DEFENDANT);
+  } else {
+    return null;
+  }
 };

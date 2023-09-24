@@ -14,11 +14,12 @@ export const createEntries = (
   section: ISection,
   entries: IEntry[],
   authenticatedUser: UserRole,
-  currentVersion: number
+  currentVersion: number,
+  select?: boolean
 ) => {
   const sectionEntries = entries.filter((entry) => entry.sectionId === section.id);
   sectionEntries.forEach((entry) => {
-    selection = createEntry(selection, entry, entries, authenticatedUser, currentVersion);
+    selection = createEntry(selection, entry, entries, authenticatedUser, currentVersion, select);
   });
 };
 
@@ -27,12 +28,13 @@ export const createEntry = (
   entry: IEntry,
   entries: IEntry[],
   authenticatedUser: UserRole,
-  currentVersion: number
+  currentVersion: number,
+  select?: boolean
 ) => {
   const isOld = entry.version != null && entry.version < currentVersion;
   const canEdit = entry.role === authenticatedUser && !isOld;
   const entryTitleCC = createEntryTitle(selection, entry, entries);
-  return createEntryText(entryTitleCC, entry, canEdit);
+  return createEntryText(entryTitleCC, entry, canEdit, select);
 };
 
 const createEntryTitle = (selection: Word.ContentControl, entry: IEntry, entries: IEntry[]) => {
@@ -48,6 +50,7 @@ const createEntryTitle = (selection: Word.ContentControl, entry: IEntry, entries
   entryCC.title = entry.role === UserRole.Plaintiff ? TITLE_ENTRY_TITLE_PLAINTIFF : TITLE_ENTRY_TITLE_DEFENDANT;
   entryCC.cannotEdit = true;
   entryCC.cannotDelete = true;
+
   if (entry.associatedEntry) {
     const associatedEntry = entries.find((entryItem) => entryItem.id === entry.associatedEntry);
     const associatedEntryP = entryCC.insertParagraph(
@@ -68,9 +71,9 @@ const createEntryTitle = (selection: Word.ContentControl, entry: IEntry, entries
   return entryCC;
 };
 
-const createEntryText = (selection: Word.ContentControl, entry: IEntry, canEdit: boolean) => {
+const createEntryText = (selection: Word.ContentControl, entry: IEntry, canEdit: boolean, select?: boolean) => {
   const emptyP = selection.insertParagraph("", Word.InsertLocation.after);
-  const entryP = emptyP.insertHtml(entry.text, Word.InsertLocation.replace);
+  const entryP = emptyP.insertHtml(entry.text || "Noch kein Text erstellt.", Word.InsertLocation.replace);
   entryP.styleBuiltIn = "Normal";
 
   const entryCC = entryP.insertContentControl();
@@ -80,5 +83,8 @@ const createEntryText = (selection: Word.ContentControl, entry: IEntry, canEdit:
   entryCC.title = entry.role === UserRole.Plaintiff ? TITLE_ENTRY_TEXT_PLAINTIFF : TITLE_ENTRY_TEXT_DEFENDANT;
   entryCC.cannotEdit = !canEdit;
   entryCC.cannotDelete = true;
+  if (canEdit && select) {
+    entryCC.select(Word.SelectionMode.select);
+  }
   return entryCC;
 };

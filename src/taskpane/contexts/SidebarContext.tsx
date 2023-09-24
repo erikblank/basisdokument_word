@@ -1,12 +1,12 @@
 import { Bookmarks, File, Notepad, Paperclip, Scales } from "phosphor-react";
 import React, { createContext, Dispatch, FC, ReactNode, SetStateAction, useContext, useState } from "react";
-import { SidebarSorting } from "../components/SidebarSorting";
+import { SidebarWordFunctions } from "../components/sidebar/SidebarWordFunctions";
 import { ISidebar, SidebarState } from "../types";
 
 const sidebars: ISidebar[] = [
   {
-    name: SidebarState.Sorting,
-    jsxElem: <SidebarSorting key={SidebarState.Sorting.toString()}></SidebarSorting>,
+    name: SidebarState.WordFunctions,
+    jsxElem: <SidebarWordFunctions key={SidebarState.WordFunctions.toString()}></SidebarWordFunctions>,
     icon: <File size={20} />,
   },
   {

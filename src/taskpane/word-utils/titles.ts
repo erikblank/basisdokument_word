@@ -1,6 +1,7 @@
 // section
 export const TITLE_SECTION_PLAINTIFF = "Titel Gliederungspunkt Klagepartei";
 export const TITLE_SECTION_DEFENDANT = "Titel Gliederungspunkt Beklagtenpartei";
+export const TITLE_SECTION = "Titel Gliederungspunkt";
 
 // entry
 export const TITLE_ENTRY_TITLE_PLAINTIFF = "Titel Beitrag Klagepartei";

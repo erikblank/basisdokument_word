@@ -1,9 +1,9 @@
 import cx from "classnames";
 import React from "react";
-import { useUser } from "../contexts";
-import { useSidebar } from "../contexts/SidebarContext";
-import { UserRole } from "../types";
-import { Button } from "./Button";
+import { useUser } from "../../contexts";
+import { useSidebar } from "../../contexts/SidebarContext";
+import { UserRole } from "../../types";
+import { Button } from "./../Button";
 
 export const SidebarHeader = () => {
   const { sidebars, activeSidebar, setActiveSidebar } = useSidebar();

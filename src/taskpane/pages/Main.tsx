@@ -1,5 +1,7 @@
-import React from "react";
-import { Sidebar } from "../components/Sidebar";
+import React, { useEffect } from "react";
+import { Sidebar } from "../components/sidebar/Sidebar";
+import { useSection } from "../contexts";
+import { updateIndexOfSectionTitles } from "../word-utils/WordSectionService";
 
 /* const section: ISection = {
   id: "80456c3c-ab0d-453a-b92f-57020acd6d5b",
@@ -45,8 +47,12 @@ import { Sidebar } from "../components/Sidebar";
 ]; */
 
 const Main = () => {
-  /* const { entries } = useCase();
-  const { sectionList } = useSection(); */
+  /* const { entries } = useCase(); */
+  const { sectionList } = useSection();
+
+  useEffect(() => {
+    updateIndexOfSectionTitles();
+  }, [sectionList]);
 
   return (
     <>

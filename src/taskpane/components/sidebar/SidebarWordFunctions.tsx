@@ -1,16 +1,16 @@
 import { Spinner, SpinnerSize } from "@fluentui/react";
-import { ArrowBendLeftUp, Plus, Trash } from "phosphor-react";
 import React, { useEffect, useState } from "react";
-import { useCase, useSection, useUser } from "../contexts";
-import { IEntry, ISection, UserRole } from "../types";
-import { TITLE_ENTRY_TEXT_DEFENDANT, TITLE_ENTRY_TEXT_PLAINTIFF } from "../word-utils/titles";
-import { createEntry } from "../word-utils/WordEntryService";
-import { isEntryByTitle, isMetaDataByTitle, isSelectionByTitle } from "../word-utils/wordUtils";
-import { Button } from "./Button";
+import { useCase, useSection, useUser } from "../../contexts";
+import { IEntry, ISection, UserRole } from "../../types";
+import { isEntryByTitle, isMetaDataByTitle, isSelectionByTitle } from "../../word-utils/wordUtils";
+import AddEntryButton from "./word-function-buttons/AddEntryButton";
+import AddSectionButton from "./word-function-buttons/AddSectionButton";
+import DeleteEntryButton from "./word-function-buttons/DeleteEntryButton";
+import DeleteSectionButton from "./word-function-buttons/DeleteSectionButton";
 
 /* global console, Word, Office */
 
-export const SidebarSorting = () => {
+export const SidebarWordFunctions = () => {
   const { user } = useUser();
   const { entries } = useCase();
   const { sectionList } = useSection();
@@ -24,8 +24,6 @@ export const SidebarSorting = () => {
   const entryIsOld = entry && entry?.version !== null && entry.version < currentVersion;
   const sectionIsOld = section && section?.version != null && section.version < currentVersion;
 
-  console.log(setEntry);
-
   useEffect(() => {
     Office.context.document.addHandlerAsync(Office.EventType.DocumentSelectionChanged, handleSelectionChange);
 
@@ -33,7 +31,7 @@ export const SidebarSorting = () => {
       // Remove the event handler on component unmount.
       Office.context.document.removeHandlerAsync(Office.EventType.DocumentSelectionChanged, handleSelectionChange);
     };
-  }, []);
+  }, [entries, sectionList]);
 
   const titleVisible = (title: string) => {
     if (title === "") {
@@ -64,6 +62,7 @@ export const SidebarSorting = () => {
           // Set the parent content control's text to state
           const title = parentCC.title;
           const tag = parentCC.tag;
+
           if (isSelectionByTitle(title)) {
             const section = sectionList.find((sectionItem) => sectionItem.id === tag);
             setSection(section);
@@ -80,41 +79,6 @@ export const SidebarSorting = () => {
       console.error(error);
     }
     setIsLoading(false);
-  };
-
-  const createEntryOnEntry = async () => {
-    // todo: create entry in word
-    try {
-      await Word.run(async (context) => {
-        // get list of all entries of selected section
-        const sectionEntries = entries.filter((entryItem) => entryItem.sectionId === entry.sectionId);
-        // get last entry of section
-        if (sectionEntries.length > 0) {
-          // get last entry -> entries are loaded reverse, so the first one is the last one
-          const lastEntry = sectionEntries[sectionEntries.length - 1];
-          // load all contentControls
-          const contentControls = context.document.contentControls;
-          contentControls.load(["tag", "title"]);
-          await context.sync();
-          // get last entry and choose cc of last entry as selection
-          // get entriesCCs by tag
-          const selection = contentControls.items.find(
-            (cc) =>
-              cc.tag === lastEntry.id &&
-              (cc.title === TITLE_ENTRY_TEXT_DEFENDANT || cc.title === TITLE_ENTRY_TEXT_PLAINTIFF)
-          );
-
-          createEntry(selection, lastEntry, entries, user.role, currentVersion);
-          await context.sync();
-        } else {
-          // get last cc of section
-        }
-        // insert entry
-      });
-    } catch (error) {
-      console.error(error);
-    }
-    // todo: create entry in context data
   };
 
   return (
@@ -135,7 +99,7 @@ export const SidebarSorting = () => {
                   <span className="font-bold">Aktuelle Auswahl:</span>{" "}
                   {section ? "Gliederungspunkt" : entry ? "Beitrag" : isMetaData ? "Rubrum" : ""}
                 </p>
-                {section && (
+                {section && (section.titlePlaintiff || section.titleDefendant) && (
                   <div className="bg-offWhite rounded-md p-2 my-2 items-center">
                     <div className="flex flex-col text-darkGrey font-bold w-full item-container text-sm">
                       <span className={user?.role === UserRole.Defendant ? "font-light" : ""}>
@@ -155,6 +119,8 @@ export const SidebarSorting = () => {
                     </div>
                   </div>
                 )}
+
+                {section && !section.titlePlaintiff && !section.titleDefendant && <div>Noch keine Titel vergeben.</div>}
                 {entry && (
                   <div className="bg-offWhite rounded-md p-2 my-2 items-center">
                     <div className="flex flex-col text-darkGrey font-bold w-full item-container text-sm">
@@ -171,101 +137,42 @@ export const SidebarSorting = () => {
                     {section && (
                       <>
                         <div>
-                          <Button
-                            bgColor="bg-darkGrey hover:bg-darkGrey/60"
-                            textColor="text-white"
-                            size="sm"
-                            icon={<Plus weight="bold" />}
-                          >
-                            Gliederungspunkt hinzufügen
-                          </Button>
+                          <AddSectionButton sectionIdBefore={section.id} />
                         </div>
                         {!sectionIsOld && (
                           <div>
-                            <Button
-                              bgColor="bg-darkGrey hover:bg-darkGrey/60"
-                              textColor="text-white"
-                              size="sm"
-                              icon={<Trash weight="bold" />}
-                            >
-                              Gliederungspunkt löschen
-                            </Button>
+                            <DeleteSectionButton sectionId={section.id} />
                           </div>
                         )}
                         <div>
-                          <Button
-                            bgColor="bg-darkGrey hover:bg-darkGrey/60"
-                            textColor="text-white"
-                            size="sm"
-                            icon={<Plus weight="bold" />}
-                          >
-                            Beitrag hinzufügen
-                          </Button>
+                          <AddEntryButton sectionId={section.id} />
                         </div>
                       </>
                     )}
                     {entry && (
                       <>
                         <div>
-                          <Button
-                            bgColor="bg-darkGrey hover:bg-darkGrey/60"
-                            textColor="text-white"
-                            size="sm"
-                            icon={<Plus weight="bold" />}
-                          >
-                            Gliederungspunkt hinzufügen
-                          </Button>
+                          <AddSectionButton sectionIdBefore={entry.sectionId} />
                         </div>
                         <div>
-                          <Button
-                            bgColor="bg-darkGrey hover:bg-darkGrey/60"
-                            textColor="text-white"
-                            size="sm"
-                            icon={<Plus weight="bold" />}
-                            onClick={createEntryOnEntry}
-                          >
-                            Beitrag hinzufügen
-                          </Button>
+                          <AddEntryButton sectionId={entry.sectionId} />
                         </div>
                         {entry.role === user.role && !entryIsOld && (
                           <div>
-                            <Button
-                              bgColor="bg-darkGrey hover:bg-darkGrey/60"
-                              textColor="text-white"
-                              size="sm"
-                              icon={<Trash weight="bold" />}
-                            >
-                              Beitrag löschen
-                            </Button>
+                            <DeleteEntryButton entryId={entry.id} />
                           </div>
                         )}
                         {entry.role !== user.role && (
                           <div>
-                            <Button
-                              bgColor="bg-darkGrey hover:bg-darkGrey/60"
-                              textColor="text-white"
-                              size="sm"
-                              icon={<ArrowBendLeftUp weight="bold" />}
-                            >
-                              Auf Beitrag Bezug nehmen
-                            </Button>
+                            <AddEntryButton sectionId={entry.sectionId} associatedEntry={entry.id} />
                           </div>
                         )}
                       </>
                     )}
                     {isMetaData && (
-                      <>
-                        <div>
-                          <Button
-                            bgColor="bg-darkGrey hover:bg-darkGrey/60"
-                            textColor="text-white"
-                            size="sm"
-                            icon={<Plus weight="bold" />}
-                          >
-                            Gliederungspunkt hinzufügen
-                          </Button>
-                        </div>
-                      </>
+                      <div>
+                        <AddSectionButton />
+                      </div>
                     )}
                   </div>
                 </div>

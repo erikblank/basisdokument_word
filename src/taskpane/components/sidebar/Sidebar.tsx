@@ -1,6 +1,6 @@
 import React from "react";
-import { useSidebar } from "../contexts/SidebarContext";
-import { useUser } from "../contexts/UserContext";
+import { useSidebar } from "../../contexts/SidebarContext";
+import { useUser } from "../../contexts/UserContext";
 import { SidebarHeader } from "./SidebarHeader";
 
 export const Sidebar = () => {

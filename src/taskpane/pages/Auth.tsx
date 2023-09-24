@@ -61,7 +61,6 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
     setIntroduction,
     setCurrentVersion,
     setHighlightedEntries,
-    setIndividualEntrySorting,
   } = useCase();
   const { setSectionList, setIndividualSorting } = useSection();
 
@@ -266,7 +265,6 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
   const setContextFromEditFile = (editFile: any) => {
     setIndividualSorting(editFile.individualSorting);
     setHighlightedEntries(editFile.highlightedEntries);
-    setIndividualEntrySorting(editFile.individualEntrySorting);
     setFileId(editFile.fileId);
   };
 
@@ -277,7 +275,7 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
     setUsage(UsageMode.Readonly);
     setRole(UserRole.Client);
     setNewVersionMode(false);
-    setActiveSidebar(SidebarState.Sorting);
+    setActiveSidebar(SidebarState.WordFunctions);
   };
 
   useEffect(() => {
