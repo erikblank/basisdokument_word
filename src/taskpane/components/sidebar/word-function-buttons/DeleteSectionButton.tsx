@@ -1,6 +1,6 @@
 import { Trash } from "phosphor-react";
 import React, { useState } from "react";
-import { useSection } from "../../../contexts";
+import { useCase, useSection } from "../../../contexts";
 import WFButton from "./WFButton";
 
 /* global Word */
@@ -11,14 +11,16 @@ interface DeleteSectionButtonProps {
 
 const DeleteSectionButton = ({ sectionId }: DeleteSectionButtonProps) => {
   const { setSectionList } = useSection();
+  const { setEntries, entries } = useCase();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const deleteEntry = () => {
+  const deleteSection = () => {
     setSectionList((prevSections) => prevSections.filter((section) => section.id !== sectionId));
+    setEntries((entries) => entries.filter((entry) => entry.sectionId !== sectionId));
   };
 
-  const handleDeleteEntry = async () => {
+  const handleDeleteSection = async () => {
     setIsLoading(true);
     try {
       await Word.run(async (context) => {
@@ -27,17 +29,24 @@ const DeleteSectionButton = ({ sectionId }: DeleteSectionButtonProps) => {
         contentControls.load(["tag"]);
         await context.sync();
 
-        // get entryCCs by tag
-        const entryCCs = contentControls.items.filter((cc) => cc.tag === sectionId);
-        entryCCs.forEach((item) => {
+        // get sectionCCs by tag
+        const sectionCCs = contentControls.items.filter((cc) => cc.tag === sectionId);
+        sectionCCs.forEach((item) => {
           item.cannotDelete = false;
-        });
-
-        entryCCs.forEach((item) => {
           item.delete(false);
         });
 
-        deleteEntry();
+        const sectionEntries = entries.filter((entry) => entry.sectionId === sectionId);
+
+        sectionEntries.forEach((entry) => {
+          const entryCCs = contentControls.items.filter((cc) => cc.tag === entry.id);
+          entryCCs.forEach((item) => {
+            item.cannotDelete = false;
+            item.delete(false);
+          });
+        });
+
+        deleteSection();
 
         await context.sync();
       });
@@ -49,7 +58,7 @@ const DeleteSectionButton = ({ sectionId }: DeleteSectionButtonProps) => {
   return (
     <WFButton
       icon={<Trash weight="bold" />}
-      onClick={handleDeleteEntry}
+      onClick={handleDeleteSection}
       label={"Gliederungspunkt löschen"}
       disabled={isLoading}
     />

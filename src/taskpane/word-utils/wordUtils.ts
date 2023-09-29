@@ -9,6 +9,7 @@ import {
   TITLE_META_DATA,
   TITLE_META_DATA_DEFENDANT,
   TITLE_META_DATA_PLAINTIFF,
+  TITLE_SECTION,
   TITLE_SECTION_DEFENDANT,
   TITLE_SECTION_PLAINTIFF,
 } from "./titles";
@@ -58,7 +59,7 @@ export const createTitle = async () => {
 };
 
 export const isSelectionByTitle = (title: string) => {
-  return title === TITLE_SECTION_PLAINTIFF || title === TITLE_SECTION_DEFENDANT;
+  return title === TITLE_SECTION_PLAINTIFF || title === TITLE_SECTION_DEFENDANT || title === TITLE_SECTION;
 };
 
 export const isEntryByTitle = (title: string) => {

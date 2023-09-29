@@ -33,22 +33,22 @@ export const createEntry = (
 ) => {
   const isOld = entry.version != null && entry.version < currentVersion;
   const canEdit = entry.role === authenticatedUser && !isOld;
-  const entryTitleCC = createEntryTitle(selection, entry, entries);
+  const entryTitleCC = createEntryTitle(selection, entry, entries, canEdit);
   return createEntryText(entryTitleCC, entry, canEdit, select);
 };
 
-const createEntryTitle = (selection: Word.ContentControl, entry: IEntry, entries: IEntry[]) => {
+const createEntryTitle = (selection: Word.ContentControl, entry: IEntry, entries: IEntry[], canEdit: boolean) => {
   const entryP = selection.insertParagraph(`${entry.entryCode}: ${entry.author}`, Word.InsertLocation.after);
   entryP.styleBuiltIn = "Heading3";
 
   const entryCC = entryP.insertContentControl();
-  entryCC.appearance = "BoundingBox";
   entryCC.placeholderText = `Titel ${
     entry.role === UserRole.Plaintiff ? "Klagepartei" : "Beklagtenpartei"
   } für Beitrag noch nicht vergeben`;
   entryCC.tag = entry.id;
   entryCC.title = entry.role === UserRole.Plaintiff ? TITLE_ENTRY_TITLE_PLAINTIFF : TITLE_ENTRY_TITLE_DEFENDANT;
-  entryCC.cannotEdit = true;
+  entryCC.appearance = canEdit ? "BoundingBox" : "Hidden";
+  entryCC.cannotEdit = !canEdit;
   entryCC.cannotDelete = true;
 
   if (entry.associatedEntry) {
@@ -73,14 +73,22 @@ const createEntryTitle = (selection: Word.ContentControl, entry: IEntry, entries
 
 const createEntryText = (selection: Word.ContentControl, entry: IEntry, canEdit: boolean, select?: boolean) => {
   const emptyP = selection.insertParagraph("", Word.InsertLocation.after);
-  const entryP = emptyP.insertHtml(entry.text || "Noch kein Text erstellt.", Word.InsertLocation.replace);
-  entryP.styleBuiltIn = "Normal";
 
-  const entryCC = entryP.insertContentControl();
-  entryCC.appearance = "BoundingBox";
-  entryCC.placeholderText = "Titel Klagepartei noch nicht vergeben";
+  let entryCC: Word.ContentControl;
+  if (entry.text) {
+    const entryTextP = emptyP.insertHtml(entry.text, Word.InsertLocation.replace);
+    entryCC = entryTextP.insertContentControl();
+    entryTextP.styleBuiltIn = "Normal";
+  } else {
+    entryCC = emptyP.insertContentControl();
+    emptyP.styleBuiltIn = "Normal";
+  }
+
+  entryCC.placeholderText = "Noch kein Text erstellt.";
+  entryCC.styleBuiltIn = "Normal";
   entryCC.tag = entry.id;
   entryCC.title = entry.role === UserRole.Plaintiff ? TITLE_ENTRY_TEXT_PLAINTIFF : TITLE_ENTRY_TEXT_DEFENDANT;
+  entryCC.appearance = canEdit ? "BoundingBox" : "Hidden";
   entryCC.cannotEdit = !canEdit;
   entryCC.cannotDelete = true;
   if (canEdit && select) {

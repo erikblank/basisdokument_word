@@ -106,13 +106,14 @@ const createSectionSubTitle = (
 
   // wrap title with ContentControl
   const sectionTitleCC = sectionTitleP.insertContentControl();
-  sectionTitleCC.appearance = "BoundingBox";
   sectionTitleCC.placeholderText = `Titel ${
     role === UserRole.Plaintiff ? "Klagepartei" : "Beklagtenpartei"
   } für Gliederungspunkt noch nicht vergeben`;
   sectionTitleCC.tag = section.id;
   sectionTitleCC.title = role === UserRole.Plaintiff ? TITLE_SECTION_PLAINTIFF : TITLE_SECTION_DEFENDANT;
-  sectionTitleCC.cannotEdit = isOld || (role !== authenticatedUser && authenticatedUser !== UserRole.Judge);
+  const cannotEdit = isOld || (role !== authenticatedUser && authenticatedUser !== UserRole.Judge);
+  sectionTitleCC.appearance = cannotEdit ? "Hidden" : "BoundingBox";
+  sectionTitleCC.cannotEdit = cannotEdit;
   sectionTitleCC.cannotDelete = true;
   return sectionTitleCC;
 };

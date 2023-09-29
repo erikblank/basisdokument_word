@@ -50,20 +50,23 @@ const createMetaDataText = (
   role: UserRole.Defendant | UserRole.Plaintiff,
   authUser: UserRole
 ) => {
-  const emptyP = selection.insertParagraph("", Word.InsertLocation.after);
+  let emptyP = selection.insertParagraph("", Word.InsertLocation.after);
   const metaDataText = role === UserRole.Plaintiff ? metaData.plaintiff : metaData.defendant;
-  const metaDataP = emptyP.insertHtml(
-    metaDataText || "Bisher wurde noch kein Rubrum hinterlegt.",
-    Word.InsertLocation.replace
-  );
-  metaDataP.styleBuiltIn = "Normal";
+  let metaDataCC: Word.ContentControl;
+  if (metaDataText) {
+    const metaDataP = emptyP.insertHtml(metaDataText, Word.InsertLocation.replace);
+    metaDataCC = metaDataP.insertContentControl();
+    metaDataP.styleBuiltIn = "Normal";
+  } else {
+    metaDataCC = emptyP.insertContentControl();
+  }
 
-  const metaDataCC = metaDataP.insertContentControl();
-  metaDataCC.appearance = "BoundingBox";
+  metaDataCC.styleBuiltIn = "Normal";
   metaDataCC.placeholderText = "Noch kein Rubrum erstellt";
   metaDataCC.tag = `Rubrum ${role}`;
   metaDataCC.title = role === UserRole.Plaintiff ? TITLE_META_DATA_PLAINTIFF : TITLE_META_DATA_DEFENDANT;
   const canEdit = authUser === role;
+  metaDataCC.appearance = canEdit ? "BoundingBox" : "Hidden";
   metaDataCC.cannotEdit = !canEdit;
   metaDataCC.cannotDelete = true;
 
@@ -71,18 +74,6 @@ const createMetaDataText = (
 };
 
 export const getLastCCOfMetaData = async (context: Word.RequestContext) => {
-  /* const metaDataCC = context.document.contentControls.getByTitle("TITLE_META_DATA_DEFENDANT");
-  // eslint-disable-next-line office-addins/no-navigational-load
-  metaDataCC.load(["items/length"]);
-  await context.sync();
-  const length = metaDataCC.items.length;
-  if (length > 0) {
-    const lastItem = metaDataCC.items[length - 1];
-    lastItem.load();
-    await context.sync();
-    return lastItem;
-  }
-  return null; */
   const contentControls = context.document.contentControls;
   contentControls.load(["title"]);
   await context.sync();

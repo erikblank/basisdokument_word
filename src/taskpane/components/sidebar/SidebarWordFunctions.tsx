@@ -21,6 +21,8 @@ export const SidebarWordFunctions = () => {
   const [isMetaData, setIsMetaData] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const nothingSelected = !entry && !section && !isMetaData;
+
   const entryIsOld = entry && entry?.version !== null && entry.version < currentVersion;
   const sectionIsOld = section && section?.version != null && section.version < currentVersion;
 
@@ -32,14 +34,6 @@ export const SidebarWordFunctions = () => {
       Office.context.document.removeHandlerAsync(Office.EventType.DocumentSelectionChanged, handleSelectionChange);
     };
   }, [entries, sectionList]);
-
-  const titleVisible = (title: string) => {
-    if (title === "") {
-      return false;
-    } else {
-      return true;
-    }
-  };
 
   const handleSelectionChange = async () => {
     setIsLoading(true);
@@ -92,92 +86,79 @@ export const SidebarWordFunctions = () => {
         )}
         {!isLoading && (
           <div className="">
-            {!entry && !section && !isMetaData && <p>Nichts ausgewählt.</p>}
-            {(entry || section || isMetaData) && (
-              <div>
-                <p>
-                  <span className="font-bold">Aktuelle Auswahl:</span>{" "}
-                  {section ? "Gliederungspunkt" : entry ? "Beitrag" : isMetaData ? "Rubrum" : ""}
-                </p>
-                {section && (section.titlePlaintiff || section.titleDefendant) && (
-                  <div className="bg-offWhite rounded-md p-2 my-2 items-center">
-                    <div className="flex flex-col text-darkGrey font-bold w-full item-container text-sm">
-                      <span className={user?.role === UserRole.Defendant ? "font-light" : ""}>
-                        {section.titlePlaintiff}
-                      </span>
-                      <div
-                        className={
-                          titleVisible(section.titlePlaintiff) === false ||
-                          titleVisible(section.titleDefendant) === false
-                            ? ""
-                            : "h-0.5 w-24 bg-lightGrey rounded-full my-1"
-                        }
-                      />
-                      <span className={user?.role === UserRole.Plaintiff ? "font-light" : ""}>
-                        {section.titleDefendant}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                {section && !section.titlePlaintiff && !section.titleDefendant && <div>Noch keine Titel vergeben.</div>}
-                {entry && (
-                  <div className="bg-offWhite rounded-md p-2 my-2 items-center">
-                    <div className="flex flex-col text-darkGrey font-bold w-full item-container text-sm">
-                      <span className={user?.role === UserRole.Defendant ? "font-light" : ""}>
-                        {entry.entryCode + " " + entry.author}
-                      </span>
-                    </div>
-                  </div>
-                )}
-
-                <div className="pt-1">
-                  <p className="font-bold">Aktionen:</p>
-                  <div className="flex gap-2 flex-col justify-start pt-1">
-                    {section && (
-                      <>
-                        <div>
-                          <AddSectionButton sectionIdBefore={section.id} />
-                        </div>
-                        {!sectionIsOld && (
-                          <div>
-                            <DeleteSectionButton sectionId={section.id} />
-                          </div>
-                        )}
-                        <div>
-                          <AddEntryButton sectionId={section.id} />
-                        </div>
-                      </>
-                    )}
-                    {entry && (
-                      <>
-                        <div>
-                          <AddSectionButton sectionIdBefore={entry.sectionId} />
-                        </div>
-                        <div>
-                          <AddEntryButton sectionId={entry.sectionId} />
-                        </div>
-                        {entry.role === user.role && !entryIsOld && (
-                          <div>
-                            <DeleteEntryButton entryId={entry.id} />
-                          </div>
-                        )}
-                        {entry.role !== user.role && (
-                          <div>
-                            <AddEntryButton sectionId={entry.sectionId} associatedEntry={entry.id} />
-                          </div>
-                        )}
-                      </>
-                    )}
-                    {isMetaData && (
-                      <div>
-                        <AddSectionButton />
-                      </div>
-                    )}
+            <div>
+              <p>
+                <span className="font-bold">Aktuelle Auswahl:</span>{" "}
+                {section ? "Gliederungspunkt" : entry ? "Beitrag" : isMetaData ? "Rubrum" : ""}
+                {nothingSelected && "Wähle bestimmte Bereiche im Text aus, um weitere Aktionen zu erhalten."}
+              </p>
+              {section && (
+                <div className="bg-offWhite rounded-md p-2 my-2 items-center">
+                  <div className="flex flex-col text-darkGrey font-bold w-full item-container text-sm">
+                    <span className={user?.role === UserRole.Defendant ? "font-light" : ""}>
+                      {`${sectionList.findIndex((sectionItem) => section.id === sectionItem.id) + 1}. Gliederungspunkt`}
+                    </span>
                   </div>
                 </div>
+              )}
+
+              {section && !section.titlePlaintiff && !section.titleDefendant && <div>Noch keine Titel vergeben.</div>}
+              {entry && (
+                <div className="bg-offWhite rounded-md p-2 my-2 items-center">
+                  <div className="flex flex-col text-darkGrey font-bold w-full item-container text-sm">
+                    <span className={user?.role === UserRole.Defendant ? "font-light" : ""}>
+                      {entry.entryCode + " von  " + entry.author}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <div className="pt-1">
+                <p className="font-bold">Aktionen:</p>
+                <div className="flex gap-2 flex-col justify-start pt-1">
+                  {section && (
+                    <>
+                      <div>
+                        <AddSectionButton sectionIdBefore={section.id} />
+                      </div>
+                      {!sectionIsOld && (
+                        <div>
+                          <DeleteSectionButton sectionId={section.id} />
+                        </div>
+                      )}
+                      <div>
+                        <AddEntryButton sectionId={section.id} />
+                      </div>
+                    </>
+                  )}
+                  {entry && (
+                    <>
+                      <div>
+                        <AddSectionButton sectionIdBefore={entry.sectionId} />
+                      </div>
+                      <div>
+                        <AddEntryButton sectionId={entry.sectionId} />
+                      </div>
+                      {entry.role === user.role && !entryIsOld && (
+                        <div>
+                          <DeleteEntryButton entryId={entry.id} />
+                        </div>
+                      )}
+                      {entry.role !== user.role && (
+                        <div>
+                          <AddEntryButton sectionId={entry.sectionId} associatedEntry={entry.id} />
+                        </div>
+                      )}
+                    </>
+                  )}
+                  {(isMetaData || nothingSelected) && (
+                    <div>
+                      <AddSectionButton />
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+            </div>
           </div>
         )}
       </div>
