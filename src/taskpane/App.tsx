@@ -8,6 +8,7 @@ import Progress from "./components/Progress";
 import { CaseProvider, SectionProvider, UserProvider } from "./contexts";
 import { SidebarProvider } from "./contexts/SidebarContext";
 import { OnboardingProvider } from "./contexts/OnboardingContext";
+import { ExportProvider } from "./contexts/ExportContext";
 /* global Word, require */
 
 export interface AppProps {
@@ -35,16 +36,18 @@ const App = ({ isOfficeInitialized, title }: AppProps) => {
           <SectionProvider>
             <CaseProvider>
               <SidebarProvider>
-                {!isOfficeInitialized && (
-                  <Progress
-                    title={title}
-                    logo={require("./../../assets/logo-filled.png")}
-                    message="Please sideload your addin to see app body."
-                    click={click}
-                  />
-                )}
-                {isOfficeInitialized && !isAuthenticated && <Auth setIsAuthenticated={setIsAuthenticated} />}
-                {isOfficeInitialized && isAuthenticated && <Main />}
+                <ExportProvider>
+                  {!isOfficeInitialized && (
+                    <Progress
+                      title={title}
+                      logo={require("./../../assets/logo-filled.png")}
+                      message="Please sideload your addin to see app body."
+                      click={click}
+                    />
+                  )}
+                  {isOfficeInitialized && !isAuthenticated && <Auth setIsAuthenticated={setIsAuthenticated} />}
+                  {isOfficeInitialized && isAuthenticated && <Main />}
+                </ExportProvider>
               </SidebarProvider>
             </CaseProvider>
           </SectionProvider>

@@ -230,8 +230,8 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
             Diese Anwendung erlaubt Ihnen das Editieren und Erstellen eines Basisdokuments. Bitte laden Sie den
             aktuellen Stand des Basisdokuments in Form einer .txt-Datei hoch, falls Sie an einer Version weiterarbeiten
             wollen. Das Basisdokument verwendet keinen externen Server, um Daten zu speichern. Alle Daten, die Sie
-            hochladen, bleiben <b>im Browser Ihres Computers</b>. Das Basisdokument kann schließlich als .txt und .pdf
-            exportiert werden und somit an Dritte weitergegeben werden.
+            hochladen, bleiben <b>im Microsoft Word Programm Ihres Computers</b>. Das Basisdokument kann schließlich als
+            .txt und .pdf exportiert werden und somit an Dritte weitergegeben werden.
           </p>
         )}
 

@@ -77,7 +77,7 @@ export const SidebarWordFunctions = () => {
 
   return (
     //h-[calc(100vh-100px)] -> overflow scroll needs a fixed height of parent: 100px (height of sidebar header)
-    <div className="flex flex-col gap-3 h-[calc(100vh-100px)] pt-4 px-4">
+    <div className="flex flex-col gap-3 h-full pt-4 px-4">
       <div className="w-full h-full">
         {isLoading && (
           <div className="flex align-middle justify-center w-full h-full">

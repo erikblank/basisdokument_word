@@ -33,11 +33,11 @@ export const createEntry = (
 ) => {
   const isOld = entry.version != null && entry.version < currentVersion;
   const canEdit = entry.role === authenticatedUser && !isOld;
-  const entryTitleCC = createEntryTitle(selection, entry, entries, canEdit);
+  const entryTitleCC = createEntryTitle(selection, entry, entries);
   return createEntryText(entryTitleCC, entry, canEdit, select);
 };
 
-const createEntryTitle = (selection: Word.ContentControl, entry: IEntry, entries: IEntry[], canEdit: boolean) => {
+const createEntryTitle = (selection: Word.ContentControl, entry: IEntry, entries: IEntry[]) => {
   const entryP = selection.insertParagraph(`${entry.entryCode}: ${entry.author}`, Word.InsertLocation.after);
   entryP.styleBuiltIn = "Heading3";
 
@@ -47,8 +47,8 @@ const createEntryTitle = (selection: Word.ContentControl, entry: IEntry, entries
   } für Beitrag noch nicht vergeben`;
   entryCC.tag = entry.id;
   entryCC.title = entry.role === UserRole.Plaintiff ? TITLE_ENTRY_TITLE_PLAINTIFF : TITLE_ENTRY_TITLE_DEFENDANT;
-  entryCC.appearance = canEdit ? "BoundingBox" : "Hidden";
-  entryCC.cannotEdit = !canEdit;
+  entryCC.appearance = "Hidden";
+  entryCC.cannotEdit = true;
   entryCC.cannotDelete = true;
 
   if (entry.associatedEntry) {
