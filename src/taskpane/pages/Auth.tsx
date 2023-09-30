@@ -9,6 +9,7 @@ import { Button } from "../components/Button";
 import { Tooltip } from "../components/Tooltip";
 import { VersionPopup } from "../components/VersionPopup";
 import { useCase, useSection, useUser } from "../contexts";
+import { useHeaderContext } from "../contexts/HeaderContext";
 import { useOnboarding } from "../contexts/OnboardingContext";
 import { useSidebar } from "../contexts/SidebarContext";
 import { createBasisdokument } from "../data-management/creation-handler";
@@ -52,6 +53,7 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
     setIntroduction,
     setCurrentVersion,
   } = useCase();
+  const { setVersionHistory } = useHeaderContext();
   const { setSectionList } = useSection();
 
   const { setUser } = useUser();
@@ -191,6 +193,7 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
 
   // The imported data from the files is then merged into a React state (context provider).
   const setContextFromBasisdokument = (basisdokument: any) => {
+    setVersionHistory(basisdokument.versions);
     setEntries(basisdokument.entries);
     setSectionList(basisdokument.sections);
     setMetaData(basisdokument.metaData);

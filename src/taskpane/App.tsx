@@ -9,6 +9,7 @@ import { CaseProvider, SectionProvider, UserProvider } from "./contexts";
 import { SidebarProvider } from "./contexts/SidebarContext";
 import { OnboardingProvider } from "./contexts/OnboardingContext";
 import { ExportProvider } from "./contexts/ExportContext";
+import { HeaderProvider } from "./contexts/HeaderContext";
 /* global Word, require */
 
 export interface AppProps {
@@ -34,22 +35,24 @@ const App = ({ isOfficeInitialized, title }: AppProps) => {
       <OnboardingProvider>
         <UserProvider>
           <SectionProvider>
-            <CaseProvider>
-              <SidebarProvider>
-                <ExportProvider>
-                  {!isOfficeInitialized && (
-                    <Progress
-                      title={title}
-                      logo={require("./../../assets/logo-filled.png")}
-                      message="Please sideload your addin to see app body."
-                      click={click}
-                    />
-                  )}
-                  {isOfficeInitialized && !isAuthenticated && <Auth setIsAuthenticated={setIsAuthenticated} />}
-                  {isOfficeInitialized && isAuthenticated && <Main />}
-                </ExportProvider>
-              </SidebarProvider>
-            </CaseProvider>
+            <HeaderProvider>
+              <CaseProvider>
+                <SidebarProvider>
+                  <ExportProvider>
+                    {!isOfficeInitialized && (
+                      <Progress
+                        title={title}
+                        logo={require("./../../assets/logo-filled.png")}
+                        message="Please sideload your addin to see app body."
+                        click={click}
+                      />
+                    )}
+                    {isOfficeInitialized && !isAuthenticated && <Auth setIsAuthenticated={setIsAuthenticated} />}
+                    {isOfficeInitialized && isAuthenticated && <Main />}
+                  </ExportProvider>
+                </SidebarProvider>
+              </CaseProvider>
+            </HeaderProvider>
           </SectionProvider>
         </UserProvider>
       </OnboardingProvider>
