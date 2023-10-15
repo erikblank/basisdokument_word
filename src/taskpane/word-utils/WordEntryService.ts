@@ -8,6 +8,7 @@ import {
   TITLE_ENTRY_TITLE_DEFENDANT,
   TITLE_ENTRY_TITLE_PLAINTIFF,
 } from "./titles";
+import { isOldEntry } from "./wordUtils";
 
 export const createEntries = (
   selection: Word.ContentControl,
@@ -31,8 +32,7 @@ export const createEntry = (
   currentVersion: number,
   select?: boolean
 ) => {
-  const isOld = entry.version != null && entry.version < currentVersion;
-  const canEdit = entry.role === authenticatedUser && !isOld;
+  const canEdit = entry.role === authenticatedUser && !isOldEntry(entry, currentVersion);
   const entryTitleCC = createEntryTitle(selection, entry, entries);
   return createEntryText(entryTitleCC, entry, canEdit, select);
 };

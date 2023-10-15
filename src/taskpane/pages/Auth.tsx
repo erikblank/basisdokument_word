@@ -282,19 +282,6 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
                 >
                   Erstellen
                 </button>
-                <button
-                  onClick={() => {
-                    setReadonly();
-                  }}
-                  className={cx(
-                    "flex items-center justify-center w-[100px] h-[50px] font-bold rounded-md bg-offWhite hover:bg-lightGrey hover:cursor-pointer",
-                    {
-                      "border-2 border-darkGrey": usage === UsageMode.Readonly,
-                    }
-                  )}
-                >
-                  Einsehen
-                </button>
               </>
             )}
           </div>
@@ -332,19 +319,6 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
                   )}
                 >
                   {UserRole.Defendant}
-                </button>
-                <button
-                  onClick={() => {
-                    setRole(UserRole.Judge);
-                  }}
-                  className={cx(
-                    "flex items-center justify-center w-[150px] h-[50px] font-bold rounded-md bg-offWhite hover:bg-lightGrey hover:cursor-pointer",
-                    {
-                      "border-2 border-darkGrey": role === UserRole.Judge,
-                    }
-                  )}
-                >
-                  {UserRole.Judge}
                 </button>
               </div>
             </div>

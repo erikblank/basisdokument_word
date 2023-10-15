@@ -1,15 +1,15 @@
-import "../index.css";
-import "./theme/theme-style.css";
 import * as React from "react";
 import { useState } from "react";
-import Auth from "./pages/Auth";
-import Main from "./pages/Main";
+import "../index.css";
 import Progress from "./components/Progress";
 import { CaseProvider, SectionProvider, UserProvider } from "./contexts";
-import { SidebarProvider } from "./contexts/SidebarContext";
-import { OnboardingProvider } from "./contexts/OnboardingContext";
 import { ExportProvider } from "./contexts/ExportContext";
 import { HeaderProvider } from "./contexts/HeaderContext";
+import { OnboardingProvider } from "./contexts/OnboardingContext";
+import { SidebarProvider } from "./contexts/SidebarContext";
+import Auth from "./pages/Auth";
+import Main from "./pages/Main";
+import "./theme/theme-style.css";
 /* global Word, require */
 
 export interface AppProps {

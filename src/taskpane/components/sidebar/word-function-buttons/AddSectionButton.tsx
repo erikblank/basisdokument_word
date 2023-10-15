@@ -29,7 +29,7 @@ const AddSectionButton = ({ sectionIdBefore }: AddSectionButtonProps) => {
       titleDefendant: "",
     };
     if (sectionIdBefore) {
-      const indexSection = sectionList.findIndex((sect) => sect.id === sectionIdBefore);
+      const indexSection = sectionList.findIndex((sect) => sect.id === sectionIdBefore) + 1;
       setSectionList((prevSectionList) => [
         ...prevSectionList.slice(0, indexSection),
         section,
@@ -75,7 +75,6 @@ const AddSectionButton = ({ sectionIdBefore }: AddSectionButtonProps) => {
           const newSection = createNewSection();
 
           // create section word
-          // todo: index
           createSection(selection, newSection, undefined, [], user.role, currentVersion, context, true);
           await context.sync();
         }

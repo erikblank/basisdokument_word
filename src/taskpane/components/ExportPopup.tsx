@@ -26,7 +26,6 @@ export const ExportPopup: React.FC<IProps> = ({
   currentVersion,
   versionHistory,
   metaData,
-  introduction,
   entries,
   sectionList,
 }) => {
@@ -87,7 +86,7 @@ export const ExportPopup: React.FC<IProps> = ({
     }
   };
 
-  const triggerDownload = () => {
+  const triggerDownload = async () => {
     if (showOptionalCover === false) {
       coverPDF = undefined;
     }
@@ -104,10 +103,8 @@ export const ExportPopup: React.FC<IProps> = ({
         currentVersion,
         versionHistory,
         metaData,
-        introduction,
         entries,
         sectionList,
-
         coverPDF,
         otherAuthor,
         downloadNewAdditionally,
@@ -135,8 +132,8 @@ export const ExportPopup: React.FC<IProps> = ({
 
   return (
     <>
-      <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-        <div className="w-auto my-6 mx-auto max-w-3xl min-w-[500px]">
+      <div className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none mx-3">
+        <div className="w-auto my-6 mx-auto max-w-3xl min-w-[300px]">
           {/*content*/}
           <div className="p-6 space-y-4 border-0 rounded-lg shadow-lg flex flex-col w-full bg-white outline-none focus:outline-none">
             {/*header*/}

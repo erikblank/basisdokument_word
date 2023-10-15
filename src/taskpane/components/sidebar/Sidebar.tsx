@@ -5,14 +5,22 @@ import { useSidebar } from "../../contexts/SidebarContext";
 import { useUser } from "../../contexts/UserContext";
 import { Button } from "../Button";
 import { SidebarHeader } from "./SidebarHeader";
+import useSyncWordData from "../../data-management/word-sync-data-hanlder";
+
+/* global */
 
 export const Sidebar = () => {
   const { sidebars, activeSidebar } = useSidebar();
   const { user } = useUser();
   const { setIsExportPopupOpen } = useExport();
+  const { syncWordData } = useSyncWordData();
 
   const onClickDownloadButton = () => {
     setIsExportPopupOpen((currentState) => !currentState);
+  };
+
+  const onClickSyncButton = async () => {
+    await syncWordData();
   };
 
   return (
@@ -28,6 +36,10 @@ export const Sidebar = () => {
           <Button size="sm" onClick={onClickDownloadButton}>
             <FileArrowDown size={16} className="text-white mr-2" weight="bold" />
             Export
+          </Button>
+          <Button size="sm" onClick={onClickSyncButton}>
+            <FileArrowDown size={16} className="text-white mr-2" weight="bold" />
+            Sync
           </Button>
         </div>
         {/* put here change version input field */}

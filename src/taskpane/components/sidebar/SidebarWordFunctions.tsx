@@ -2,7 +2,7 @@ import { Spinner, SpinnerSize } from "@fluentui/react";
 import React, { useEffect, useState } from "react";
 import { useCase, useSection, useUser } from "../../contexts";
 import { IEntry, ISection, UserRole } from "../../types";
-import { isEntryByTitle, isMetaDataByTitle, isSelectionByTitle } from "../../word-utils/wordUtils";
+import { isEntryByTitle, isMetaDataByTitle, isSectionByTitle } from "../../word-utils/wordUtils";
 import AddEntryButton from "./word-function-buttons/AddEntryButton";
 import AddSectionButton from "./word-function-buttons/AddSectionButton";
 import DeleteEntryButton from "./word-function-buttons/DeleteEntryButton";
@@ -57,7 +57,7 @@ export const SidebarWordFunctions = () => {
           const title = parentCC.title;
           const tag = parentCC.tag;
 
-          if (isSelectionByTitle(title)) {
+          if (isSectionByTitle(title)) {
             const section = sectionList.find((sectionItem) => sectionItem.id === tag);
             setSection(section);
           } else if (isEntryByTitle(title)) {
@@ -101,8 +101,6 @@ export const SidebarWordFunctions = () => {
                   </div>
                 </div>
               )}
-
-              {section && !section.titlePlaintiff && !section.titleDefendant && <div>Noch keine Titel vergeben.</div>}
               {entry && (
                 <div className="bg-offWhite rounded-md p-2 my-2 items-center">
                   <div className="flex flex-col text-darkGrey font-bold w-full item-container text-sm">

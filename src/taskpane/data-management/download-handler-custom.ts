@@ -2,9 +2,11 @@ import { saveAs } from "file-saver";
 import {
   IBookmark,
   IEntry,
+  IEvidence,
   IHighlightedEntry,
   IHighlighter,
   IMetaData,
+  IIntroduction,
   IndividualEntrySortingEntry,
   INote,
   ISection,
@@ -21,10 +23,10 @@ let allEntries: any[] = [];
 let newEntries: any[] = [];
 let rubrumKlage: any[] = [];
 let rubrumBeklagt: any[] = [];
+let introductionKlage: any[] = [];
+let introductionBeklagt: any[] = [];
 let basisdokument: any[] = [];
 let allHints: any[] = [];
-let klageEvidences: any[] = [];
-let beklagtEvidences: any[] = [];
 
 function downloadObjectAsJSON(obj: object, fileName: string) {
   // Create a blob of the data
@@ -60,6 +62,28 @@ function getEntryTitle(entryId: any, obj: any) {
       }
     }
     return "Antwort auf: " + title;
+  } else {
+    return "";
+  }
+}
+
+//add evidences in one string because of autotable commas
+function getEvidenceNumeration(evidences: Array<IEvidence>) {
+  var numEvidences: string = "";
+  if (evidences) {
+    for (let i = 0; i < evidences.length; i++) {
+      let evidence = i + 1 + ") " + evidences[i].name;
+      if (evidences[i].hasAttachment) {
+        evidence = evidence + " als Anlage " + evidences[i].attachmentId;
+      }
+      //do not add line break/empty line to last item
+      if (i === evidences.length - 1) {
+        numEvidences = numEvidences + evidence;
+      } else {
+        numEvidences = numEvidences + evidence + "\n";
+      }
+    }
+    return numEvidences;
   } else {
     return "";
   }
@@ -147,7 +171,6 @@ async function downloadBasisdokumentAsPDF(
 ) {
   let doc = new jsPDF();
   let newDoc = new jsPDF(); //additional pdf with only new entries
-  let evDoc = new jsPDF(); //additional pdf with only evidences
 
   //DATA for autotables
   // basic data
@@ -177,45 +200,61 @@ async function downloadBasisdokumentAsPDF(
   }
   rubrumBeklagt = [parseHTMLtoString(metaDefendant)];
 
+  // introduction Plaintiff
+  let metaIntroPlaintiff;
+  if (obj["introduction"] && obj["introduction"]["plaintiff"] !== (undefined || "")) {
+    metaIntroPlaintiff = obj["introduction"]["plaintiff"];
+  } else {
+    metaIntroPlaintiff = "Es wurde keine Einführung von der Klagepartei angelegt.";
+  }
+  introductionKlage = [parseHTMLtoString(metaIntroPlaintiff)];
+
+  // introduction Defendant
+  let metaIntroDefendant;
+  if (obj["introduction"] && obj["introduction"]["defendant"] !== (undefined || "")) {
+    metaIntroDefendant = obj["introduction"]["defendant"];
+  } else {
+    metaIntroDefendant = "Es wurde keine Einführung von der Beklagtenpartei angelegt.";
+  }
+  introductionBeklagt = [parseHTMLtoString(metaIntroDefendant)];
+
   // hints from the judge §139 ZPO
-  if (obj["judgeHints"]) {
-    if (obj["judgeHints"].length === 0) {
-      //no hints
-      allHints.push({
-        title: "Keine Hinweise",
-        text: "Es wurden bisher keine Hinweise von der Richterin / dem Richter verfasst.",
-      });
+  if (obj["judgeHints"].length === 0) {
+    //no hints
+    allHints.push({
+      title: "Keine Hinweise",
+      text: "Es wurden bisher keine Hinweise von der Richterin / dem Richter verfasst.",
+    });
+  }
+
+  for (let i = 0; i < obj["judgeHints"].length; i++) {
+    const judgeHintObject = obj["judgeHints"][i];
+    let filteredEntry = obj["entries"].find((entry: any) => {
+      return entry.id === judgeHintObject.associatedEntry;
+    });
+    let entryId;
+    let entryCodeText;
+    if (filteredEntry) {
+      let entryCode = filteredEntry.entryCode;
+      entryId = entryCode;
+      entryCodeText = " | Verweis auf: " + entryCode;
+    } else {
+      entryCodeText = "";
     }
 
-    for (let i = 0; i < obj["judgeHints"].length; i++) {
-      const judgeHintObject = obj["judgeHints"][i];
-      let filteredEntry = obj["entries"].find((entry: any) => {
-        return entry.id === judgeHintObject.associatedEntry;
-      });
-      let entryId;
-      let entryCodeText;
-      if (filteredEntry) {
-        let entryCode = filteredEntry.entryCode;
-        entryId = entryCode;
-        entryCodeText = " | Verweis auf: " + entryCode;
-      } else {
-        entryCodeText = "";
-      }
-
-      let hint = {
-        id: entryId,
-        title:
-          judgeHintObject.author +
-          entryCodeText +
-          " | " +
-          judgeHintObject.title +
-          " | Hinzugefügt am: " +
-          getEntryTimestamp(judgeHintObject, obj),
-        text: parseHTMLtoString(judgeHintObject.text),
-        version: judgeHintObject.version,
-      };
-      allHints.push(hint);
-    }
+    let hint = {
+      id: entryId,
+      title:
+        judgeHintObject.author +
+        entryCodeText +
+        " | " +
+        judgeHintObject.title +
+        " | Hinzugefügt am: " +
+        getEntryTimestamp(judgeHintObject, obj),
+      text: parseHTMLtoString(judgeHintObject.text),
+      version: judgeHintObject.version,
+    };
+    allHints.push(hint);
   }
 
   // Get grouped entries
@@ -266,6 +305,11 @@ async function downloadBasisdokumentAsPDF(
           text: parseHTMLtoString(entry.text),
           version: entry.version,
           associatedEntry: getEntryTitle(entry.associatedEntry, obj),
+          evidences: !entry.evidences?.length
+            ? undefined
+            : entry.evidences?.length > 1
+            ? "Beweise:\n" + getEvidenceNumeration(entry.evidences)
+            : "Beweis:\n" + getEvidenceNumeration(entry.evidences),
         };
         allEntries.push(tableEntry);
 
@@ -278,6 +322,11 @@ async function downloadBasisdokumentAsPDF(
             text: parseHTMLtoString(entry.text),
             version: entry.version,
             associatedEntry: getEntryTitle(entry.associatedEntry, obj),
+            evidences: !entry.evidences?.length
+              ? undefined
+              : entry.evidences?.length > 1
+              ? "Beweise:\n" + getEvidenceNumeration(entry.evidences)
+              : "Beweis:\n" + getEvidenceNumeration(entry.evidences),
           };
           newEntries.push(newEntry);
         }
@@ -323,14 +372,6 @@ async function downloadBasisdokumentAsPDF(
       });
     },
   });
-  //additional pdf with only evidences
-  autoTable(evDoc, {
-    theme: "grid",
-    styles: { fontStyle: "bold" },
-    head: [["Basisdokument - Beweisliste"]],
-    headStyles: { fontStyle: "bold", fontSize: 14, fillColor: [0, 122, 122] },
-    body: [[basisdokument[0].caseId], [basisdokument[0].version], [basisdokument[0].timestamp]],
-  });
   basisdokument = [];
 
   //autotable rubrum plaintiff
@@ -358,14 +399,6 @@ async function downloadBasisdokumentAsPDF(
         pageNumber: newDoc.getCurrentPageInfo().pageNumber,
       });
     },
-  });
-  //additional pdf with only evidences
-  autoTable(evDoc, {
-    theme: "grid",
-    styles: { halign: "center" },
-    head: [["Rubrum Klagepartei"]],
-    headStyles: { fillColor: [0, 122, 122] },
-    body: [rubrumKlage],
   });
   rubrumKlage = [];
 
@@ -395,25 +428,73 @@ async function downloadBasisdokumentAsPDF(
       });
     },
   });
-  //additional pdf with only evidences
-  autoTable(evDoc, {
+  rubrumBeklagt = [];
+
+  //autotable introduction plaintiff
+  autoTable(doc, {
     theme: "grid",
     styles: { halign: "center" },
-    head: [["Rubrum Beklagtenpartei"]],
-    headStyles: { fillColor: [0, 122, 122] },
-    body: [rubrumBeklagt],
+    head: [["Einführung Klagepartei"]],
+    headStyles: { fillColor: [0, 102, 204] },
+    body: [introductionKlage],
+    didDrawPage: function () {
+      doc.outline.add(null, "Einführung Klagepartei", {
+        pageNumber: doc.getCurrentPageInfo().pageNumber,
+      });
+    },
   });
-  rubrumBeklagt = [];
+  //additional pdf with only new entries
+  autoTable(newDoc, {
+    theme: "grid",
+    styles: { halign: "center" },
+    head: [["Einführung Klagepartei"]],
+    headStyles: { fillColor: [0, 122, 122] },
+    body: [introductionKlage],
+    didDrawPage: function () {
+      newDoc.outline.add(null, "Einführung Klagepartei", {
+        pageNumber: newDoc.getCurrentPageInfo().pageNumber,
+      });
+    },
+  });
+  introductionKlage = [];
+
+  //autotable introduction defendant
+  autoTable(doc, {
+    theme: "grid",
+    styles: { halign: "center" },
+    head: [["Einführung Beklagtenpartei"]],
+    headStyles: { fillColor: [0, 102, 204] },
+    body: [introductionBeklagt],
+    didDrawPage: function () {
+      doc.outline.add(null, "Einführung Beklagtenpartei", {
+        pageNumber: doc.getCurrentPageInfo().pageNumber,
+      });
+    },
+  });
+  //additional pdf with only new entries
+  autoTable(newDoc, {
+    theme: "grid",
+    styles: { halign: "center" },
+    head: [["Einführung Beklagtenpartei"]],
+    headStyles: { fillColor: [0, 122, 122] },
+    body: [introductionBeklagt],
+    didDrawPage: function () {
+      newDoc.outline.add(null, "Einführung Beklagtenpartei", {
+        pageNumber: newDoc.getCurrentPageInfo().pageNumber,
+      });
+    },
+  });
+  introductionBeklagt = [];
 
   //autotable hints
   doc.addPage();
   autoTable(doc, {
     theme: "grid",
-    head: [["Hinweise des Richters (nach §139 ZPO)"]],
+    head: [["Hinweise des Richters nach (nach §139 ZPO)"]],
     headStyles: { fontStyle: "bold", fontSize: 12, fillColor: [0, 102, 204] },
     margin: { top: 6, bottom: 6, left: 6, right: 6 },
     didDrawPage: function () {
-      doc.outline.add(null, "Hinweise des Richters (nach §139 ZPO)", {
+      doc.outline.add(null, "Hinweise des Richters nach (nach §139 ZPO)", {
         pageNumber: doc.getCurrentPageInfo().pageNumber,
       });
     },
@@ -671,46 +752,6 @@ async function downloadBasisdokumentAsPDF(
   allHints = [];
   allEntries = [];
 
-  // additional evidences pdf
-
-  autoTable(evDoc, {
-    theme: "grid",
-    head: [["Beweisliste Kläger"]],
-    headStyles: { fillColor: [0, 122, 122] },
-  });
-
-  for (let i = 0; i < klageEvidences.length; i++) {
-    let data;
-    if (klageEvidences[i].imageDesignation) {
-      data = [[klageEvidences[i].designation], [klageEvidences[i].imageDesignation]];
-    } else {
-      data = [[klageEvidences[i].designation]];
-    }
-    autoTable(evDoc, {
-      theme: "grid",
-      body: data,
-    });
-  }
-
-  autoTable(evDoc, {
-    theme: "grid",
-    head: [["Beweisliste Beklagter"]],
-    headStyles: { fillColor: [0, 122, 122] },
-  });
-
-  for (let i = 0; i < beklagtEvidences.length; i++) {
-    let data;
-    if (beklagtEvidences[i].imageDesignation) {
-      data = [[beklagtEvidences[i].designation], [beklagtEvidences[i].imageDesignation]];
-    } else {
-      data = [[beklagtEvidences[i].designation]];
-    }
-    autoTable(evDoc, {
-      theme: "grid",
-      body: data,
-    });
-  }
-
   //signature page
   let signatureData: any = [
     [
@@ -798,6 +839,7 @@ export function downloadBasisdokument(
   currentVersion: number,
   versionHistory: IVersion[],
   metaData: IMetaData | null,
+  introduction: IIntroduction | null,
   entries: IEntry[],
   sectionList: ISection[],
   coverPDF: ArrayBuffer | undefined,
@@ -814,6 +856,7 @@ export function downloadBasisdokument(
   basisdokumentObject["versions"][basisdokumentObject["versions"].length - 1]["timestamp"] =
     new Date() /*.toLocaleString("de-DE", {timeZone: "Europe/Berlin"})*/;
   basisdokumentObject["metaData"] = metaData;
+  basisdokumentObject["introduction"] = introduction;
   basisdokumentObject["entries"] = entries;
   basisdokumentObject["sections"] = sectionList;
   basisdokumentObject["otherAuthor"] = otherAuthor;

@@ -7,6 +7,7 @@ import {
   TITLE_SECTION_PLAINTIFF,
 } from "./titles";
 import { createEntries } from "./WordEntryService";
+import { isOldDefendant, isOldPlaintiff } from "./wordUtils";
 
 /* global Word */
 
@@ -78,18 +79,20 @@ const createSectionSubTitlesAndEntries = (
   userRole: UserRole,
   currVersion: number
 ) => {
-  const isOldPlainTiff =
-    section.titlePlaintiffVersion != null &&
-    section.titlePlaintiffVersion < currVersion &&
-    !(typeof section.titlePlaintiff === "string" && section.titlePlaintiff.trim().length === 0);
-
-  const isOldDefendant =
-    section.titleDefendantVersion != null &&
-    section.titleDefendantVersion < currVersion &&
-    !(typeof section.titleDefendant === "string" && section.titlePlaintiff.trim().length === 0);
-
-  const plainTiffCC = createSectionSubTitle(selection, section, UserRole.Plaintiff, userRole, isOldPlainTiff);
-  const defendantCC = createSectionSubTitle(plainTiffCC, section, UserRole.Defendant, userRole, isOldDefendant);
+  const plainTiffCC = createSectionSubTitle(
+    selection,
+    section,
+    UserRole.Plaintiff,
+    userRole,
+    isOldPlaintiff(section, currVersion)
+  );
+  const defendantCC = createSectionSubTitle(
+    plainTiffCC,
+    section,
+    UserRole.Defendant,
+    userRole,
+    isOldDefendant(section, currVersion)
+  );
   createEntries(defendantCC, section, entries, userRole, currVersion);
 };
 
