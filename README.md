@@ -1,8 +1,8 @@
 # Basisdokument
 
-_Master's thesis in M.Sc. Medieninformatik, Wintersemester 2023/2024_
+_Master's thesis in M.Sc. Medieninformatik, winter semester 2023/2024_
 
-_von: Erik Blank_
+_from: Erik Blank_
 
 ## About
 
