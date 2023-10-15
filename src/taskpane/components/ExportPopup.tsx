@@ -6,6 +6,7 @@ import { useExport } from "../contexts/ExportContext";
 import { downloadBasisdokument } from "../data-management/download-handler";
 import { IEntry, IHighlightedEntry, IIntroduction, IMetaData, ISection, IStateUserInput, IVersion } from "../types";
 import { Button } from "./Button";
+import useSyncWordData from "../data-management/word-sync-data-hanlder";
 
 interface IProps {
   fileId: string;
@@ -43,6 +44,8 @@ export const ExportPopup: React.FC<IProps> = ({
   var [downloadNewAdditionally, setDownloadNewAdditionally] = useState<boolean>(false);
   var validUserInput: boolean = true;
 
+  const { isLoading, syncWordData } = useSyncWordData();
+
   /* global console, setTimeout */
 
   //Refs
@@ -79,9 +82,11 @@ export const ExportPopup: React.FC<IProps> = ({
     }
   };
 
-  const onClickDownloadButton = () => {
+  const onClickDownloadButton = async () => {
     validateUserInput(coverFilename);
-    if (validUserInput) {
+    if (validUserInput && !isLoading) {
+      console.log("start");
+      await syncWordData();
       triggerDownload();
     }
   };

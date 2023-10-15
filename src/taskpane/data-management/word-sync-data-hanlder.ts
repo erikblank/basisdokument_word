@@ -127,6 +127,7 @@ const useSyncWordData = () => {
       console.error(error);
     } finally {
       setIsLoading(false);
+      console.log("dowload finished");
     }
   };
 
