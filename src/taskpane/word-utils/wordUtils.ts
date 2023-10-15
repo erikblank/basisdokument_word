@@ -26,7 +26,6 @@ export const clearBody = async () => {
     // Synchronize the document state by executing the queued commands,
     // and return a promise to indicate task completion.
     await context.sync();
-    console.log(contentControls.items.length);
     if (contentControls.items.length === 0) {
       console.log("No content control found.");
     } else {

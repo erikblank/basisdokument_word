@@ -180,7 +180,6 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
 
   // init data to word document
   const initWordData = async (basisdokument: any, userRole: UserRole) => {
-    console.log(basisdokument);
     const entries: IEntry[] = basisdokument.entries;
     const sections: ISection[] = basisdokument.sections;
     const metaData: IMetaData = basisdokument.metaData;

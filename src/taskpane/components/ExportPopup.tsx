@@ -85,7 +85,6 @@ export const ExportPopup: React.FC<IProps> = ({
   const onClickDownloadButton = async () => {
     validateUserInput(coverFilename);
     if (validUserInput && !isLoading) {
-      console.log("start");
       await syncWordData();
       triggerDownload();
     }
