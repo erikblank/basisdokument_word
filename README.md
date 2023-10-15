@@ -1,12 +1,16 @@
 # Basisdokument
 
-_Masterarbeit in M.Sc. Medieninformatik, Wintersemester 2023/2024_
+_Master's thesis in M.Sc. Medieninformatik, Wintersemester 2023/2024_
 
 _von: Erik Blank_
 
 ## About
 
 This app enables lawyers to create their previous analogue correspondence in a digital environment. It offers a variety of useful features that aim to ease the process of working on cases while also making the process more time efficient. The app is based on the works of the last semester by [Hahn, Röhr & Sautmann (2021)](https://github.com/kindOfCurly/PS-Basisdokument/wiki/Projekt-Log), [Freisleben, Schwarz & Zels (2021)](https://elearning.uni-regensburg.de/mod/resource/view.php?id=2172773) and [Universität Regensburg (2023)](https://github.com/UniRegensburg/basisdokument). The Microsoft Word add-in allows to use the "Basisdokument" for lawyers also in Microsoft Word and allows them to create and edit a "Basisdokument".
+
+## Context
+
+In the context of my Master's thesis, I developed a Word add-in with the aim of enabling the use of the "Basisdokument" within Microsoft Word; this work serves as an exploratory investigation into the feasible implementation of the Basisdokument in Word, along with potential limitations.
 
 ## Motivation
 
