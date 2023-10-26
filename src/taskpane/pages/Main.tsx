@@ -13,7 +13,7 @@ const Main = () => {
   }, [sectionList]);
 
   const { isExportPopupOpen } = useExport();
-  const { caseId, currentVersion, metaData, introduction, fileId, entries, highlightedEntries } = useCase();
+  const { caseId, currentVersion, introduction, fileId, entries, highlightedEntries } = useCase();
   const { versionHistory } = useHeaderContext();
 
   return (
@@ -25,7 +25,6 @@ const Main = () => {
           caseId={caseId}
           currentVersion={currentVersion}
           versionHistory={versionHistory}
-          metaData={metaData}
           introduction={introduction}
           entries={entries}
           sectionList={sectionList}

@@ -31,9 +31,11 @@ const useSyncWordData = () => {
   const { user } = useUser();
   const { sectionList, setSectionList } = useSection();
 
+  /* workaround: returns metaData for download usage, because metadata is not updated correctly in context */
   const syncWordData = async () => {
     setIsLoading(true);
     try {
+      let metaDataModified = metaData;
       await Word.run(async (context) => {
         const contentControls = context.document.getContentControls();
 
@@ -92,6 +94,7 @@ const useSyncWordData = () => {
               newEntries[entryIndex].text = extractedHtml;
             }
           } else if (isMetaDataByTitle(title)) {
+            isMetaDataByTitle(title);
             if (title === TITLE_META_DATA) {
               continue;
             }
@@ -118,19 +121,21 @@ const useSyncWordData = () => {
             }
           }
         }
-
         sectionsChanged && setSectionList(newSectionList);
-        setMetaData(newMetaData);
         setEntries(newEntries);
+        setMetaData(newMetaData);
+        metaDataModified = newMetaData;
       });
+      return metaDataModified;
     } catch (error) {
       console.error(error);
     } finally {
       setIsLoading(false);
     }
+    return metaData;
   };
 
-  return { isLoading, syncWordData };
+  return { isLoading, syncWordData, metaData };
 };
 
 export default useSyncWordData;

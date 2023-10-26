@@ -13,7 +13,6 @@ interface IProps {
   caseId: string;
   currentVersion: number;
   versionHistory: IVersion[];
-  metaData: IMetaData | null;
   introduction: IIntroduction | null;
   entries: IEntry[];
   sectionList: ISection[];
@@ -26,7 +25,6 @@ export const ExportPopup: React.FC<IProps> = ({
   caseId,
   currentVersion,
   versionHistory,
-  metaData,
   entries,
   sectionList,
 }) => {
@@ -85,12 +83,12 @@ export const ExportPopup: React.FC<IProps> = ({
   const onClickDownloadButton = async () => {
     validateUserInput(coverFilename);
     if (validUserInput && !isLoading) {
-      await syncWordData();
-      triggerDownload();
+      const newMetaData = await syncWordData();
+      triggerDownload(newMetaData);
     }
   };
 
-  const triggerDownload = async () => {
+  const triggerDownload = async (newMetaData: IMetaData) => {
     if (showOptionalCover === false) {
       coverPDF = undefined;
     }
@@ -100,13 +98,15 @@ export const ExportPopup: React.FC<IProps> = ({
     if (showAddRegard === false) {
       regard = undefined;
     }
+
+    console.log(newMetaData);
     setTimeout(() => {
       downloadBasisdokument(
         fileId,
         caseId,
         currentVersion,
         versionHistory,
-        metaData,
+        newMetaData,
         entries,
         sectionList,
         coverPDF,
