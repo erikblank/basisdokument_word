@@ -99,7 +99,6 @@ export const ExportPopup: React.FC<IProps> = ({
       regard = undefined;
     }
 
-    console.log(newMetaData);
     setTimeout(() => {
       downloadBasisdokument(
         fileId,
