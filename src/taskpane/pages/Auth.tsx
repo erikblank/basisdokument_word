@@ -30,8 +30,8 @@ const Auth: FC<AuthProps> = ({ setIsAuthenticated }) => {
   const [usage, setUsage] = useState<IStateUserInput["usage"]>(UsageMode.Open);
   const [caseId, setCaseId] = useState<IStateUserInput["caseId"]>("");
   const [role, setRole] = useState<IStateUserInput["role"]>(UserRole.Plaintiff);
-  const [prename, setPrename] = useState<IStateUserInput["prename"]>("Erik");
-  const [surname, setSurname] = useState<IStateUserInput["surname"]>("Blanko");
+  const [prename, setPrename] = useState<IStateUserInput["prename"]>("");
+  const [surname, setSurname] = useState<IStateUserInput["surname"]>("");
   const [basisdokumentFile, setBasisdokumentFile] = useState<IStateUserInput["basisdokumentFile"]>();
   const [basisdokumentFilename, setBasisdokumentFilename] = useState<IStateUserInput["basisdokumentFile"]>("");
   const [errorText, setErrorText] = useState<IStateUserInput["errorText"]>("");
