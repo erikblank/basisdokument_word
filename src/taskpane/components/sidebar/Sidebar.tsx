@@ -27,7 +27,7 @@ export const Sidebar = () => {
         <div>
           <Button size="sm" onClick={onClickDownloadButton}>
             <FileArrowDown size={16} className="text-white mr-2" weight="bold" />
-            Export
+            Herunterladen
           </Button>
         </div>
         {/* put here change version input field */}
