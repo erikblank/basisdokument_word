@@ -58,15 +58,24 @@ const AddSectionButton = ({ sectionIdBefore }: AddSectionButtonProps) => {
       await Word.run(async (context) => {
         let selection: Word.Range;
         if (!sectionIdBefore) {
-          const metaDataCC = await getLastCCOfMetaData(context);
+          if (sectionList.length === 0) {
+            const metaDataCC = await getLastCCOfMetaData(context);
 
-          if (metaDataCC) {
-            selection = metaDataCC.getRange(Word.RangeLocation.after);
+            if (metaDataCC) {
+              selection = metaDataCC.getRange(Word.RangeLocation.after);
+            }
+          } else {
+            const lastCC = await getLastCCOfSection(context, sectionList[sectionList.length - 1].id, entries);
+            if (lastCC) {
+              selection = lastCC.getRange(Word.RangeLocation.after);
+            }
           }
         } else {
-          const lastCC = await getLastCCOfSection(context, sectionIdBefore, entries);
-          if (lastCC) {
-            selection = lastCC.getRange(Word.RangeLocation.after);
+          if (sectionIdBefore) {
+            const lastCC = await getLastCCOfSection(context, sectionIdBefore, entries);
+            if (lastCC) {
+              selection = lastCC.getRange(Word.RangeLocation.after);
+            }
           }
         }
 
